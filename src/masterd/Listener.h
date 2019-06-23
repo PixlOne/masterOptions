@@ -1,6 +1,9 @@
 #ifndef MASTEROPTIONS_LISTENER_H
 #define MASTEROPTIONS_LISTENER_H
 
+#include <hidpp20/FeatureInterface.h>
+#include <hidpp20/IReprogControlsV4.h>
+
 class EventHandler
 {
 public:

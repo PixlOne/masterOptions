@@ -9,11 +9,11 @@ What works so far:
 
 * Automatic device detection
 * Automatic button divertion (pre-defined in Diverter.h)
-* Listens for diverted button evnents (prints press/release events)
+* Listens for diverted button events (prints press/release events)
 
 What's planned:
 
-* Device connection event handlers
+* Device connection event handlers (in progress)
 * Proper diverted button event handlers
 * udev rules, running as a service
 * Gesture support?

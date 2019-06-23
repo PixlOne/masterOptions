@@ -7,7 +7,6 @@
 #include <hidpp20/UnsupportedFeature.h>
 #include <algorithm>
 
-#include "DeviceFinder.h"
 #include "Listener.h"
 
 using namespace HIDPP20;
@@ -66,7 +65,7 @@ void EventListener::addEventHandler (std::unique_ptr<EventHandler> &&handler)
     uint8_t feature = handler->feature()->index();
     EventHandler *ptr = handler.get();
     handlers.emplace(feature, std::move(handler));
-    auto it = dispatcher->registerEventHandler(index, feature, [ptr](const HIDPP::Report &report)
+    dispatcher->registerEventHandler(index, feature, [ptr](const HIDPP::Report &report)
     {
         ptr->handleEvent(report);
         return true;
@@ -91,6 +90,7 @@ bool SimpleListener::event (EventHandler *handler, const HIDPP::Report &report)
 
 void listen(const char* path, HIDPP::DeviceIndex index, EventListener** listener)
 {
+    listener = new EventListener*;
     std::unique_ptr<HIDPP::Dispatcher> dispatcher;
     std::unique_ptr<HIDPP20::Device> dev;
 
