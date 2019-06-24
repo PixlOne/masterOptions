@@ -1,6 +1,7 @@
 #include <hidpp20/IReprogControlsV4.h>
 #include <cstdio>
 #include <memory>
+#include <unistd.h>
 #include <hidpp/SimpleDispatcher.h>
 #include <hidpp20/Error.h>
 
@@ -24,6 +25,7 @@ void divert_buttons(const char* path, HIDPP::DeviceIndex index)
         {
             if(i >= max_tries - 1)
                 fprintf(stderr, "Failed to open device: %s.\n", e.what());
+            else usleep(try_delay);
         }
     }
     Device dev(dispatcher.get(), index);
@@ -45,6 +47,7 @@ void divert_buttons(const char* path, HIDPP::DeviceIndex index)
         {
             if(i >= max_tries - 1)
                 fprintf(stderr, "Could not divert buttons. Error code: %d: %s\n", e.errorCode(), e.what());
+            else usleep(try_delay);
         }
     }
 }

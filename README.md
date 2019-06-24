@@ -10,11 +10,12 @@ What works so far:
 * Automatic device detection
 * Automatic button divertion (pre-defined in Diverter.h)
 * Listens for diverted button events (prints press/release events)
+* Device connection/sleep event handlers
 
 What's planned:
 
-* Device connection event handlers (in progress)
 * Proper diverted button event handlers
+* SmartShift settings
 * udev rules, running as a service
 * Gesture support?
 * CLI configuration utility (GUI too maybe?)

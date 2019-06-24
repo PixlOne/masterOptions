@@ -88,18 +88,22 @@ bool SimpleListener::event (EventHandler *handler, const HIDPP::Report &report)
     return true;
 }
 
-void listen(const char* path, HIDPP::DeviceIndex index, EventListener** listener)
+void ListenerThread::listen()
 {
-    listener = new EventListener*;
     std::unique_ptr<HIDPP::Dispatcher> dispatcher;
     std::unique_ptr<HIDPP20::Device> dev;
 
     auto *d = new HIDPP::SimpleDispatcher(path);
-    *listener = new SimpleListener(d, index);
+    listener = new SimpleListener(d, index);
     dev = std::make_unique<HIDPP20::Device>(d, index);
     dispatcher.reset (d);
 
-    (*listener)->addEventHandler( std::make_unique<ButtonHandler> (dev.get()));
+    listener->addEventHandler( std::make_unique<ButtonHandler> (dev.get()));
 
-    (*listener)->start();
+    listener->start();
+}
+
+void ListenerThread::stop()
+{
+    listener->stop();
 }

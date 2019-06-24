@@ -69,6 +69,19 @@ protected:
     virtual bool event (EventHandler* handler, const HIDPP::Report &report);
 };
 
-void listen(const char* path, HIDPP::DeviceIndex index, EventListener** listener);
+class ListenerThread
+{
+public:
+    ListenerThread (const char* p, HIDPP::DeviceIndex i):
+            path (p), index (i)
+    {
+    }
+    void stop();
+    void listen();
+protected:
+    const char* path;
+    HIDPP::DeviceIndex index;
+    EventListener* listener;
+};
 
 #endif //MASTEROPTIONS_LISTENER_H
