@@ -16,6 +16,8 @@ add_executable(masterd
     DeviceHandler.cpp
     DeviceHandler.h)
 
+set_target_properties(masterd PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+
 include_directories("/usr/local/include/hidpp/")
 
 if(EXISTS "/usr/local/lib/libhidpp.so")
