@@ -38,6 +38,7 @@ void DeviceFinder::addDevice(const char *path)
             HIDPP::WirelessDevice3, HIDPP::WirelessDevice4,
             HIDPP::WirelessDevice5, HIDPP::WirelessDevice6})
         {
+            /// TODO: CONTINUOUSLY SCAN ALL DEVICES ON RECEIVER
             //Skip wireless devices if default device (receiver) has failed
             if (!has_receiver_index && index == HIDPP::WirelessDevice1)
                 break;

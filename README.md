@@ -14,10 +14,10 @@ What works so far:
 
 What's planned:
 
-* Proper diverted button event handlers
+* Proper diverted button event handlers (in progress)
+* Gesture support (in progress)
 * SmartShift settings
 * udev rules, running as a service
-* Gesture support?
 * CLI configuration utility (GUI too maybe?)
 * ...
 

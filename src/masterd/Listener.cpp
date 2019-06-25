@@ -8,6 +8,7 @@
 #include <algorithm>
 
 #include "Listener.h"
+#include "EventHandler.h"
 
 using namespace HIDPP20;
 
@@ -16,34 +17,41 @@ void ButtonHandler::handleEvent (const HIDPP::Report &event)
     switch (event.function())
     {
         case IReprogControlsV4::Event::DivertedButtonEvent:
+        {
             new_states = IReprogControlsV4::divertedButtonEvent(event);
-            if(states.empty())
+            if (states.empty())
             {
-                for(uint16_t i : new_states)
-                    printf("%x pressed\n", i);
+                for (uint16_t i : new_states)
+                    std::thread{[=]()
+                                { press_button(i); }}.detach();
                 states = new_states;
                 break;
             }
             std::vector<uint16_t>::iterator it;
             std::vector<uint16_t> cids(states.size() + new_states.size());
-            it = std::set_union( states.begin(), states.end(), new_states.begin(), new_states.end(), cids.begin());
-            cids.resize(it-cids.begin());
-            for(uint16_t i : cids)
+            it = std::set_union(states.begin(), states.end(), new_states.begin(), new_states.end(), cids.begin());
+            cids.resize(it - cids.begin());
+            for (uint16_t i : cids)
             {
-                if(std::find(new_states.begin(), new_states.end(), i) != new_states.end())
+                if (std::find(new_states.begin(), new_states.end(), i) != new_states.end())
                 {
-                    if(std::find(states.begin(), states.end(), i) == states.end())
-                    {
-                        printf("%x pressed\n", i);
-                    }
-                }
-                else
-                {
-                    printf("%x released\n", i);
-                }
+                    if (std::find(states.begin(), states.end(), i) == states.end())
+                        std::thread{[=]()
+                                    { press_button(i); }}.detach();
+                } else
+                    std::thread{[=]()
+                                { release_button(i); }}.detach();
             }
             states = new_states;
             break;
+        }
+        case IReprogControlsV4::Event::DivertedRawXYEvent:
+        {
+            auto raw_xy = IReprogControlsV4::divertedRawXYEvent(event);
+            std::thread{[=]()
+                        { move_diverted(raw_xy); }}.detach();
+            break;
+        }
     }
 }
 

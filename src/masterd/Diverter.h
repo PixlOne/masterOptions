@@ -1,7 +1,17 @@
 #ifndef MASTEROPTIONS_DIVERTER_H
 #define MASTEROPTIONS_DIVERTER_H
 
-const uint16_t DIVERT_OPTIONS[] = {0xc3, 0xc4} ;
+struct divert_option
+{
+    uint16_t cid;
+    bool divert_button;
+    bool divert_xy;
+};
+
+const divert_option DIVERT_OPTIONS[] ={
+        {0xc3, true, true},
+        {0xc4, true, false}
+};
 
 void divert_buttons(const char* path, HIDPP::DeviceIndex index);
 

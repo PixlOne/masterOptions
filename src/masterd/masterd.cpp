@@ -8,6 +8,7 @@
 #include <algorithm>
 #include <cstdio>
 
+#include "EvdevDevice.h"
 #include "DeviceFinder.h"
 
 int main()

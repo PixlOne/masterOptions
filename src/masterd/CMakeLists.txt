@@ -14,11 +14,15 @@ add_executable(masterd
     Diverter.cpp
     Diverter.h
     DeviceHandler.cpp
-    DeviceHandler.h)
+    DeviceHandler.h
+    EvdevDevice.cpp
+    EvdevDevice.h
+    EventHandler.cpp
+    EventHandler.h)
 
 set_target_properties(masterd PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 
-include_directories("/usr/local/include/hidpp/")
+include_directories("/usr/local/include/hidpp/" "/usr/include/libevdev-1.0/")
 
 if(EXISTS "/usr/local/lib/libhidpp.so")
     target_link_libraries(masterd /usr/local/lib/libhidpp.so)
@@ -26,4 +30,4 @@ else()
     target_link_libraries(masterd /usr/lib/libhidpp.so)
 endif()
 
-target_link_libraries(masterd ${CMAKE_THREAD_LIBS_INIT})
+target_link_libraries(masterd ${CMAKE_THREAD_LIBS_INIT} /usr/lib/libevdev.so)

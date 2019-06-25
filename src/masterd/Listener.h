@@ -25,6 +25,8 @@ public:
         return &_irc4;
     }
     void handleEvent (const HIDPP::Report &event);
+protected:
+    std::future<void> current_future;
 };
 
 class EventListener

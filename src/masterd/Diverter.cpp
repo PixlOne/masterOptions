@@ -34,12 +34,20 @@ void divert_buttons(const char* path, HIDPP::DeviceIndex index)
         try
         {
             IReprogControlsV4 irc4(&dev);
-            for (uint16_t cid : DIVERT_OPTIONS)
+            for (divert_option d : DIVERT_OPTIONS)
             {
                 uint8_t flags = 0;
-                flags |= IReprogControlsV4::ChangeTemporaryDivert;
-                flags |= IReprogControlsV4::TemporaryDiverted;
-                irc4.setControlReporting(cid, flags, cid);
+                if(d.divert_button)
+                {
+                    flags |= IReprogControlsV4::ChangeTemporaryDivert;
+                    flags |= IReprogControlsV4::TemporaryDiverted;
+                }
+                if(d.divert_xy)
+                {
+                    flags |= IReprogControlsV4::ChangeRawXYDivert;
+                    flags |= IReprogControlsV4::RawXYDiverted;
+                }
+                irc4.setControlReporting(d.cid, flags, d.cid);
             }
             break;
         }

@@ -30,7 +30,7 @@ void DeviceHandler::start()
             while (SCANNING_DEVICE) {}
             HIDPP20::IReprogControlsV4 irc4(&d);
             uint8_t flags;
-            irc4.getControlReporting(DIVERT_OPTIONS[0], flags);
+            irc4.getControlReporting(DIVERT_OPTIONS[0].cid, flags);
             if (!(flags & HIDPP20::IReprogControlsV4::TemporaryDiverted))
                 divert_buttons(path.c_str(), index);
             usleep(20000);
