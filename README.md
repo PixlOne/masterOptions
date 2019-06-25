@@ -10,20 +10,22 @@ What works so far:
 * Automatic device detection
 * Automatic button divertion (pre-defined in Diverter.h)
 * Listens for diverted button events (prints press/release events)
+* Gesture detection
 * Device connection/sleep event handlers
 
 What's planned:
 
-* Proper diverted button event handlers (in progress)
-* Gesture support (in progress)
+* Proper button remapping
 * SmartShift settings
 * udev rules, running as a service
+* Configuration files
 * CLI configuration utility (GUI too maybe?)
+* Supporting more devices (low priority)
 * ...
 
 ## Building
 
-This project requires a C++14 compiler, cmake, and [libhidpp](https://github.com/cvuchener/hidpp)
+This project requires a C++14 compiler, cmake, libevdev, and [libhidpp](https://github.com/cvuchener/hidpp)
 
 To build this project, run:
 
