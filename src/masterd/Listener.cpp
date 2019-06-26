@@ -7,6 +7,7 @@
 #include <hidpp20/UnsupportedFeature.h>
 #include <algorithm>
 
+#include "Configuration.h"
 #include "Listener.h"
 #include "EventHandler.h"
 
@@ -48,8 +49,10 @@ void ButtonHandler::handleEvent (const HIDPP::Report &event)
         case IReprogControlsV4::Event::DivertedRawXYEvent:
         {
             auto raw_xy = IReprogControlsV4::divertedRawXYEvent(event);
-            std::thread{[=]()
-                        { move_diverted(raw_xy); }}.detach();
+
+            for(uint16_t i : states)
+                std::thread{[=]()
+                    { move_diverted(i, raw_xy); }}.detach();
             break;
         }
     }

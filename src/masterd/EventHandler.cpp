@@ -1,54 +1,151 @@
 #include <cstdint>
-#include <hidpp20/IReprogControlsV4.h>
+#include <cstdio>
+#include <memory>
 #include <cmath>
+#include <hidpp/SimpleDispatcher.h>
+#include <hidpp20/Device.h>
+#include <unistd.h>
+#include <hidpp20/Error.h>
 
 #include "EventHandler.h"
+#include "Configuration.h"
 
 #define PI 3.14159265
 
-int16_t GESTURE_X;
-int16_t GESTURE_Y;
-
 void press_button(uint16_t cid)
 {
-    if(cid == 0xc3)
+    auto action = config->buttonActions.find(cid)->second;
+    switch(action->type)
     {
-        GESTURE_X = 0;
-        GESTURE_Y = 0;
+        case Action::NoAction:
+            ((NoAction*)action)->press();
+            break;
+        case Action::Keypresses:
+            ((KeyAction*)action)->press();
+            break;
+        case Action::Gestures:
+            ((GestureAction*)action)->press();
+            break;
+        case Action::ToggleSmartshift:
+            ((SmartshiftAction*)action)->press();
+            break;
+        case Action::ToggleSmoothScroll:
+            ((SmoothscrollAction*)action)->press();
+            break;
+        case Action::SwapDPI:
+            ((SwapDPIAction*)action)->press();
+            break;
+        case Action::ChangeDPI:
+            ((ChangeDPIAction*)action)->press();
+            break;
     }
-    printf("%x pressed\n", cid);
 }
 
 void release_button(uint16_t cid)
 {
-    if(cid == 0xc3)
+    auto action = config->buttonActions.find(cid)->second;
+    switch(action->type)
     {
-        std::string direction = "nowhere";
-
-        auto d = get_direction(GESTURE_X, GESTURE_Y);
-
-        if(d == DOWN) direction = "down";
-        else if(d == UP) direction = "up";
-        else if(d == LEFT) direction = "left";
-        else if(d == RIGHT) direction = "right";
-
-        printf("%x released, moved %s\n", cid, direction.c_str());
-    }
-    else
-    {
-        printf("%x pressed\n", cid);
+        case Action::NoAction:
+            ((NoAction*)action)->release();
+            break;
+        case Action::Keypresses:
+            ((KeyAction*)action)->release();
+            break;
+        case Action::Gestures:
+            ((GestureAction*)action)->release();
+            break;
+        case Action::ToggleSmartshift:
+            ((SmartshiftAction*)action)->release();
+            break;
+        case Action::ToggleSmoothScroll:
+            ((SmoothscrollAction*)action)->release();
+            break;
+        case Action::SwapDPI:
+            ((SwapDPIAction*)action)->release();
+            break;
+        case Action::ChangeDPI:
+            ((ChangeDPIAction*)action)->release();
+            break;
     }
 }
 
-void move_diverted(HIDPP20::IReprogControlsV4::Move move)
+void move_diverted(uint16_t cid, HIDPP20::IReprogControlsV4::Move m)
 {
-    GESTURE_X += move.x;
-    GESTURE_Y += move.y;
+    auto action = config->buttonActions.find(cid)->second;
+    switch(action->type)
+    {
+        case Action::NoAction:
+            ((NoAction*)action)->move(m);
+            break;
+        case Action::Keypresses:
+            ((KeyAction*)action)->move(m);
+            break;
+        case Action::Gestures:
+            ((GestureAction*)action)->move(m);
+            break;
+        case Action::ToggleSmartshift:
+            ((SmartshiftAction*)action)->move(m);
+            break;
+        case Action::ToggleSmoothScroll:
+            ((SmoothscrollAction*)action)->move(m);
+            break;
+        case Action::SwapDPI:
+            ((SwapDPIAction*)action)->move(m);
+            break;
+        case Action::ChangeDPI:
+            ((ChangeDPIAction*)action)->move(m);
+            break;
+    }
+}
+
+void KeyAction::press()
+{
+    //KeyPress event for each in keys
+    for(unsigned int i : keys)
+        printf("%d pressed\n", i);
+}
+
+void KeyAction::release()
+{
+    //KeyRelease event for each in keys
+    for(unsigned int i : keys)
+        printf("%d released\n", i);
+}
+
+void GestureAction::press()
+{
+    held = true;
+    x = 0;
+    y = 0;
+}
+
+void GestureAction::move(HIDPP20::IReprogControlsV4::Move m)
+{
+    x += m.x;
+    y += m.y;
+}
+
+void GestureAction::release()
+{
+    held = false;
+
+    std::string direction;
+
+    auto d = get_direction(x, y);
+
+    if(d == Direction::Down) direction = "down";
+    else if(d == Direction::Up) direction = "up";
+    else if(d == Direction::Left) direction = "left";
+    else if(d == Direction::Right) direction = "right";
+    else if(d == Direction::None) direction = "nowhere";
+
+    printf("Gesture button released, moved %s\n", direction.c_str());
 }
 
 Direction get_direction(int x, int y)
 {
-    if(abs(x) < 50 && abs(y) < 50) return NONE;
+    if(abs(x) < 50 && abs(y) < 50) return Direction::None;
 
     double angle;
 
@@ -65,10 +162,10 @@ Direction get_direction(int x, int y)
         else if(x > 0 && y < 0) angle = 360.0 - angle; // Q4
     }
 
-    if(315 < angle || angle <= 45) return RIGHT;
-    else if(45 < angle && angle <= 135) return DOWN;
-    else if(135 < angle && angle <= 225) return LEFT;
-    else if(225 < angle && angle <= 315) return UP;
+    if(315 < angle || angle <= 45) return Direction::Right;
+    else if(45 < angle && angle <= 135) return Direction::Down;
+    else if(135 < angle && angle <= 225) return Direction::Left;
+    else if(225 < angle && angle <= 315) return Direction::Up;
 
-    return NONE;
+    return Direction::None;
 }

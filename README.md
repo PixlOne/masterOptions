@@ -15,10 +15,10 @@ What works so far:
 
 What's planned:
 
-* Proper button remapping
+* Proper button remapping (in progress)
+* Configuration files (in progress)
 * SmartShift settings
 * udev rules, running as a service
-* Configuration files
 * CLI configuration utility (GUI too maybe?)
 * Supporting more devices (low priority)
 * ...

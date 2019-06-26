@@ -6,19 +6,21 @@ set(CMAKE_CXX_STANDARD 14)
 find_package(Threads)
 
 add_executable(masterd
-    masterd.cpp
-    Listener.cpp
-    Listener.h
+    Configuration.cpp
+    Configuration.h
     DeviceFinder.cpp
     DeviceFinder.h
-    Diverter.cpp
-    Diverter.h
     DeviceHandler.cpp
     DeviceHandler.h
+    Diverter.cpp
+    Diverter.h
     EvdevDevice.cpp
     EvdevDevice.h
     EventHandler.cpp
-    EventHandler.h)
+    EventHandler.h
+    Listener.cpp
+    Listener.h
+    masterd.cpp)
 
 set_target_properties(masterd PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 

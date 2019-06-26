@@ -1,4 +1,3 @@
-#include <misc/Log.h>
 #include <hid/DeviceMonitor.h>
 #include <hidpp/SimpleDispatcher.h>
 #include <hidpp/Device.h>
