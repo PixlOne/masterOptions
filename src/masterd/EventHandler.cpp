@@ -140,7 +140,7 @@ void GestureAction::release()
     else if(d == Direction::Right) direction = "right";
     else if(d == Direction::None) direction = "nowhere";
 
-    printf("Gesture button released, moved %s\n", direction.c_str());
+    printf("Gesture button released, moved %s (%d, %d)\n", direction.c_str(), x, y);
 }
 
 Direction get_direction(int x, int y)

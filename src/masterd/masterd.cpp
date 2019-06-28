@@ -7,12 +7,25 @@
 #include <hid/DeviceMonitor.h>
 #include <algorithm>
 #include <cstdio>
+#include <stdlib.h>
 
+#include "Configuration.h"
 #include "EvdevDevice.h"
 #include "DeviceFinder.h"
 
+using namespace std;
+
 int main()
 {
+    try
+    {
+        config = new Configuration("masterd.cfg");
+    }
+    catch (std::exception &e)
+    {
+        // return EXIT_FAILURE;
+    }
+
     find_device();
     return EXIT_SUCCESS;
 }

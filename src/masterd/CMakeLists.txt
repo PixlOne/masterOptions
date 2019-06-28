@@ -3,9 +3,10 @@ project(masterd)
 
 set(CMAKE_CXX_STANDARD 14)
 
-find_package(Threads)
+find_package(Threads REQUIRED)
 
 add_executable(masterd
+    masterd.cpp
     Configuration.cpp
     Configuration.h
     DeviceFinder.cpp
@@ -19,8 +20,7 @@ add_executable(masterd
     EventHandler.cpp
     EventHandler.h
     Listener.cpp
-    Listener.h
-    masterd.cpp)
+    Listener.h)
 
 set_target_properties(masterd PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 
@@ -32,4 +32,4 @@ else()
     target_link_libraries(masterd /usr/lib/libhidpp.so)
 endif()
 
-target_link_libraries(masterd ${CMAKE_THREAD_LIBS_INIT} /usr/lib/libevdev.so)
+target_link_libraries(masterd ${CMAKE_THREAD_LIBS_INIT} /usr/lib/libevdev.so /usr/lib/libconfig++.so)

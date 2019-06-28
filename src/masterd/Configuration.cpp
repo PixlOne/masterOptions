@@ -2,6 +2,7 @@
 #include <vector>
 #include <map>
 #include <linux/input-event-codes.h>
+#include <libconfig.h++>
 
 #include "EventHandler.h"
 #include "Configuration.h"
@@ -14,5 +15,5 @@ const Configuration* config = new Configuration(
 
 Configuration::Configuration(const char *config_file)
 {
-
+    cfg.readFile(config_file);
 }
