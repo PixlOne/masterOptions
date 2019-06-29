@@ -14,6 +14,8 @@ private:
     libconfig::Config cfg;
 };
 
-extern const Configuration* config;
+Action string_to_action(std::string s);
+
+extern Configuration* config;
 
 #endif //MASTEROPTIONS_CONFIGURATION_H

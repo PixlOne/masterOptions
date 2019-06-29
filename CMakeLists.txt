@@ -8,3 +8,7 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_subdirectory(src/masterd)
+
+if(NOT EXISTS "${PROJECT_BINARY_DIR}/masterd.cfg")
+    configure_file("masterd.example.cfg" "masterd.cfg" COPYONLY)
+endif()

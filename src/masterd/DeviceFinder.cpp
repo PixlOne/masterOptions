@@ -9,6 +9,7 @@
 
 #include "DeviceFinder.h"
 #include "DeviceHandler.h"
+#include "Logger.h"
 
 struct handler_pair
 {
@@ -55,7 +56,8 @@ void DeviceFinder::addDevice(const char *path)
                         handlers.push_back(new handler_pair{
                                 dh, std::async(std::launch::async, &DeviceHandler::start, dh)
                         });
-                        printf("%s detected: device %d on %s\n", DEVICE_NAME, index, path);
+
+                        log_printf(INFO, "%s detected: device %d on %s", DEVICE_NAME, index, path);
                     }
                     i = max_tries;
                 }
@@ -64,8 +66,7 @@ void DeviceFinder::addDevice(const char *path)
                     if (e.errorCode() != HIDPP10::Error::UnknownDevice && e.errorCode() != HIDPP10::Error::InvalidSubID)
                     {
                         if (i >= max_tries-1)
-                            fprintf(stderr, "Error while querying %s, wireless device %d: %s\n",
-                                    path, index, e.what());
+                            log_printf(WARN, "Error while querying %s, wireless device %d: %s", path, index, e.what());
                         else usleep(try_delay);
                     } else break;
                 }
@@ -74,16 +75,15 @@ void DeviceFinder::addDevice(const char *path)
                     if (e.errorCode() != HIDPP20::Error::UnknownDevice && i >= max_tries)
                     {
                         if (i >= max_tries-1)
-                            fprintf(stderr, "Error while querying %s, device %d: %s\n",
-                                    path, index, e.what());
+                            log_printf(WARN, "Error while querying %s, device %d: %s", path, index, e.what());
                         else usleep(try_delay);
                     } else break;
 
                 }
                 catch (HIDPP::Dispatcher::TimeoutError &e)
                 {
-                    if (i >= max_tries)
-                        fprintf(stderr, "Device %s (index %d) timed out\n", path, index);
+                    if (i >= max_tries-1)
+                        log_printf(WARN, "Device %s (index %d) timed out.", path, index);
                     else usleep(try_delay);
                 }
             }
@@ -92,7 +92,7 @@ void DeviceFinder::addDevice(const char *path)
     catch(HIDPP::Dispatcher::NoHIDPPReportException &e) {}
     catch(std::system_error &e)
     {
-        /*fprintf(stderr, "Failed to open %s: %s\n", path, e.what());*/
+        log_printf(WARN, "Failed to open %s: %s", path, e.what());
     }
     SCANNING_DEVICE = false;
 }
@@ -104,14 +104,12 @@ void DeviceFinder::removeDevice(const char* path)
     {
         if(!strcmp((*it)->handler->path.c_str(), path))
         {
-            printf("%s on %s removed\n", DEVICE_NAME, (*it)->handler->path.c_str());
+            log_printf(INFO, "%s on %s disconnected.", DEVICE_NAME, path);
             (*it)->handler->DeviceRemoved = true;
             (*it)->future.wait();
             handlers.erase(it);
         }
         else
-        {
             it++;
-        }
     }
 }

@@ -9,6 +9,7 @@
 #include "EventHandler.h"
 #include "Diverter.h"
 #include "Configuration.h"
+#include "Logger.h"
 
 using namespace HIDPP20;
 
@@ -27,7 +28,7 @@ void divert_buttons(const char* path, HIDPP::DeviceIndex index)
         catch (std::exception &e)
         {
             if(i >= max_tries - 1)
-                fprintf(stderr, "Failed to open device: %s.\n", e.what());
+                log_printf(ERROR, "Failed to open device: %s", e.what());
             else usleep(try_delay);
         }
     }
@@ -55,7 +56,7 @@ void divert_buttons(const char* path, HIDPP::DeviceIndex index)
         catch (Error &e)
         {
             if(i >= max_tries - 1)
-                fprintf(stderr, "Could not divert buttons. Error code: %d: %s\n", e.errorCode(), e.what());
+                log_printf(ERROR, "Could not divert buttons. Error code %d: %s", e.errorCode(), e.what());
             else usleep(try_delay);
         }
     }

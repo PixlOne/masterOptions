@@ -20,7 +20,9 @@ add_executable(masterd
     EventHandler.cpp
     EventHandler.h
     Listener.cpp
-    Listener.h)
+    Listener.h
+    Logger.cpp
+    Logger.h)
 
 set_target_properties(masterd PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 

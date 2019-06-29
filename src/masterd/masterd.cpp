@@ -9,11 +9,16 @@
 #include <cstdio>
 #include <stdlib.h>
 
+#include "Logger.h"
 #include "Configuration.h"
 #include "EvdevDevice.h"
 #include "DeviceFinder.h"
 
 using namespace std;
+
+LogLevel global_verbosity = DEBUG;
+
+Configuration* config;
 
 int main()
 {
@@ -23,7 +28,7 @@ int main()
     }
     catch (std::exception &e)
     {
-        // return EXIT_FAILURE;
+        return EXIT_FAILURE;
     }
 
     find_device();

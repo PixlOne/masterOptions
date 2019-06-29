@@ -9,6 +9,7 @@
 
 #include "EventHandler.h"
 #include "Configuration.h"
+#include "Logger.h"
 
 #define PI 3.14159265
 
@@ -103,14 +104,14 @@ void KeyAction::press()
 {
     //KeyPress event for each in keys
     for(unsigned int i : keys)
-        printf("%d pressed\n", i);
+        log_printf(DEBUG, "%d pressed.", i);
 }
 
 void KeyAction::release()
 {
     //KeyRelease event for each in keys
     for(unsigned int i : keys)
-        printf("%d released\n", i);
+        log_printf(DEBUG, "%d released.", i);
 }
 
 void GestureAction::press()
@@ -140,7 +141,7 @@ void GestureAction::release()
     else if(d == Direction::Right) direction = "right";
     else if(d == Direction::None) direction = "nowhere";
 
-    printf("Gesture button released, moved %s (%d, %d)\n", direction.c_str(), x, y);
+    log_printf(DEBUG, "Gesture button released, moved %s (%d, %d).", direction.c_str(), x, y);
 }
 
 Direction get_direction(int x, int y)
