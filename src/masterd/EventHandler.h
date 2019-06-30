@@ -19,23 +19,16 @@ enum class GestureMode
     OnFewPixels
 };
 
-class Gesture
+enum class KeyMode
 {
-public:
-    Gesture(std::vector<unsigned int> k, GestureMode m) : keys (k), mode (m) {}
-    Gesture(std::vector<unsigned int> k, GestureMode m, int p) : keys (k), mode (m), per_pixel (p) {}
-
-    void action();
-private:
-    std::vector<unsigned int> keys;
-    GestureMode mode;
-    int per_pixel;
+    MapPressAndRelease,
+    PressOnRelease
 };
 
 enum class Action
 {
-    NoAction,
-    Keypresses,
+    None,
+    Keypress,
     Gestures,
     ToggleSmartshift,
     ToggleSmoothScroll,
@@ -54,16 +47,28 @@ protected:
     ButtonAction(Action a) : type (a) {};
 };
 
+class Gesture
+{
+public:
+    Gesture(ButtonAction* ba, GestureMode m) : action (ba), mode (m) {}
+    Gesture(ButtonAction* ba, GestureMode m, int pp) : action (ba), mode (m), per_pixel (pp)  {}
+
+    ButtonAction* action;
+
+    GestureMode mode;
+    int per_pixel;
+};
+
 class NoAction : public ButtonAction
 {
 public:
-    NoAction() : ButtonAction(Action::NoAction) {};
+    NoAction() : ButtonAction(Action::None) {};
 };
 
 class KeyAction : public ButtonAction
 {
 public:
-    KeyAction(std::vector<unsigned int> k) : ButtonAction(Action::Keypresses), keys (std::move(k)) {}
+    KeyAction(std::vector<unsigned int> k) : ButtonAction(Action::Keypress), keys (std::move(k)) {}
     virtual void press();
     virtual void release();
 private:
@@ -73,8 +78,8 @@ private:
 class GestureAction : public ButtonAction
 {
 public:
-    GestureAction(std::vector<Gesture> g) : ButtonAction(Action::Gestures), gestures (std::move(g)) {};
-    std::vector<Gesture> gestures;
+    GestureAction(std::map<Direction, Gesture*> g) : ButtonAction(Action::Gestures), gestures (std::move(g)) {};
+    std::map<Direction, Gesture*> gestures;
     virtual void press();
     virtual void move(HIDPP20::IReprogControlsV4::Move m);
     virtual void release();

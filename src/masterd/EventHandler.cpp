@@ -18,10 +18,10 @@ void press_button(uint16_t cid)
     auto action = config->buttonActions.find(cid)->second;
     switch(action->type)
     {
-        case Action::NoAction:
+        case Action::None:
             ((NoAction*)action)->press();
             break;
-        case Action::Keypresses:
+        case Action::Keypress:
             ((KeyAction*)action)->press();
             break;
         case Action::Gestures:
@@ -47,10 +47,10 @@ void release_button(uint16_t cid)
     auto action = config->buttonActions.find(cid)->second;
     switch(action->type)
     {
-        case Action::NoAction:
+        case Action::None:
             ((NoAction*)action)->release();
             break;
-        case Action::Keypresses:
+        case Action::Keypress:
             ((KeyAction*)action)->release();
             break;
         case Action::Gestures:
@@ -76,10 +76,10 @@ void move_diverted(uint16_t cid, HIDPP20::IReprogControlsV4::Move m)
     auto action = config->buttonActions.find(cid)->second;
     switch(action->type)
     {
-        case Action::NoAction:
+        case Action::None:
             ((NoAction*)action)->move(m);
             break;
-        case Action::Keypresses:
+        case Action::Keypress:
             ((KeyAction*)action)->move(m);
             break;
         case Action::Gestures:

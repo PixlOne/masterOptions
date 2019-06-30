@@ -14,6 +14,10 @@ private:
     libconfig::Config cfg;
 };
 
+ButtonAction* parse_action(Action action, const libconfig::Setting* action_config, bool is_gesture=false);
+
+Direction string_to_direction(std::string s);
+GestureMode string_to_gesturemode(std::string s);
 Action string_to_action(std::string s);
 
 extern Configuration* config;
