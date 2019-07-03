@@ -15,7 +15,17 @@
 
 void press_button(uint16_t cid)
 {
-    auto action = config->buttonActions.find(cid)->second;
+    if(config->buttonActions.find(cid) == config->buttonActions.end())
+    {
+        log_printf(WARN, "0x%x was pressed but no action was found.", cid);
+        return;
+    }
+
+    press_button(config->buttonActions.find(cid)->second);
+}
+
+void press_button(ButtonAction* action)
+{
     switch(action->type)
     {
         case Action::None:
@@ -33,8 +43,8 @@ void press_button(uint16_t cid)
         case Action::ToggleSmoothScroll:
             ((SmoothscrollAction*)action)->press();
             break;
-        case Action::SwapDPI:
-            ((SwapDPIAction*)action)->press();
+        case Action::CycleDPI:
+            ((CycleDPIAction*)action)->press();
             break;
         case Action::ChangeDPI:
             ((ChangeDPIAction*)action)->press();
@@ -44,7 +54,16 @@ void press_button(uint16_t cid)
 
 void release_button(uint16_t cid)
 {
-    auto action = config->buttonActions.find(cid)->second;
+    if(config->buttonActions.find(cid) == config->buttonActions.end())
+    {
+        log_printf(WARN, "0x%x was released but no action was found.", cid);
+        return;
+    }
+    release_button(config->buttonActions.find(cid)->second);
+}
+
+void release_button(ButtonAction* action)
+{
     switch(action->type)
     {
         case Action::None:
@@ -62,8 +81,8 @@ void release_button(uint16_t cid)
         case Action::ToggleSmoothScroll:
             ((SmoothscrollAction*)action)->release();
             break;
-        case Action::SwapDPI:
-            ((SwapDPIAction*)action)->release();
+        case Action::CycleDPI:
+            ((CycleDPIAction*)action)->release();
             break;
         case Action::ChangeDPI:
             ((ChangeDPIAction*)action)->release();
@@ -76,26 +95,10 @@ void move_diverted(uint16_t cid, HIDPP20::IReprogControlsV4::Move m)
     auto action = config->buttonActions.find(cid)->second;
     switch(action->type)
     {
-        case Action::None:
-            ((NoAction*)action)->move(m);
-            break;
-        case Action::Keypress:
-            ((KeyAction*)action)->move(m);
-            break;
         case Action::Gestures:
             ((GestureAction*)action)->move(m);
             break;
-        case Action::ToggleSmartshift:
-            ((SmartshiftAction*)action)->move(m);
-            break;
-        case Action::ToggleSmoothScroll:
-            ((SmoothscrollAction*)action)->move(m);
-            break;
-        case Action::SwapDPI:
-            ((SwapDPIAction*)action)->move(m);
-            break;
-        case Action::ChangeDPI:
-            ((ChangeDPIAction*)action)->move(m);
+        default:
             break;
     }
 }
@@ -135,13 +138,15 @@ void GestureAction::release()
 
     auto d = get_direction(x, y);
 
-    if(d == Direction::Down) direction = "down";
-    else if(d == Direction::Up) direction = "up";
-    else if(d == Direction::Left) direction = "left";
-    else if(d == Direction::Right) direction = "right";
-    else if(d == Direction::None) direction = "nowhere";
+    auto g = gestures.find(d);
 
-    log_printf(DEBUG, "Gesture button released, moved %s (%d, %d).", direction.c_str(), x, y);
+    if(g != gestures.end() && g->second->mode == GestureMode::OnRelease)
+    {
+        press_button(g->second->action);
+        release_button(g->second->action);
+    }
+
+    log_printf(DEBUG, "Gesture button released, moved %d (%d, %d).", d, x, y);
 }
 
 Direction get_direction(int x, int y)

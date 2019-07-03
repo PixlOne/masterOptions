@@ -234,6 +234,19 @@ ButtonAction* parse_action(Action type, const Setting* action_config, bool is_ge
 
         return new GestureAction(gestures);
     }
+    else if(type == Action::ToggleSmartshift) return new SmartshiftAction();
+    else if(type == Action::ToggleSmoothScroll) return new SmoothscrollAction();
+    else if(type == Action::CycleDPI)
+    {
+
+    }
+    else if(type == Action::ChangeDPI)
+    {
+
+    }
+
+    log_printf(ERROR, "This shouldn't have happened. Unhandled action type? Defaulting to NoAction");
+    return new NoAction();
 }
 
 Direction string_to_direction(std::string s)
@@ -264,6 +277,8 @@ GestureMode string_to_gesturemode(std::string s)
     s = original_str;
 
     log_printf(INFO, "%s is an invalid gesture mode. Defaulting to OnRelease", original_str);
+
+    return GestureMode::OnRelease;
 }
 
 Action string_to_action(std::string s)
@@ -276,7 +291,7 @@ Action string_to_action(std::string s)
     if(s == "gestures") return Action::Gestures;
     if(s == "togglesmartshift") return Action::ToggleSmartshift;
     if(s == "togglesmoothscroll") return Action::ToggleSmoothScroll;
-    if(s == "swapdpi") return Action::SwapDPI;
+    if(s == "cycledpi") return Action::CycleDPI;
     if(s == "changedpi") return Action::ChangeDPI;
 
     throw std::invalid_argument(original_str + " is an invalid action.");
