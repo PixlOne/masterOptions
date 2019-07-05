@@ -14,13 +14,17 @@
 #include "EvdevDevice.h"
 #include "DeviceFinder.h"
 
+#define evdev_name "masterd"
+
 using namespace std;
 
 LogLevel global_verbosity = DEBUG;
 
 Configuration* config;
 
-int main()
+EvdevDevice* global_evdev = new EvdevDevice(evdev_name);
+
+int main(int argc, char** argv)
 {
     try
     {

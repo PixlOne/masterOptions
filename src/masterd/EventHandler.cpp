@@ -6,10 +6,12 @@
 #include <hidpp20/Device.h>
 #include <unistd.h>
 #include <hidpp20/Error.h>
+#include <linux/input-event-codes.h>
 
 #include "EventHandler.h"
 #include "Configuration.h"
 #include "Logger.h"
+#include "EvdevDevice.h"
 
 #define PI 3.14159265
 
@@ -107,14 +109,14 @@ void KeyAction::press()
 {
     //KeyPress event for each in keys
     for(unsigned int i : keys)
-        log_printf(DEBUG, "%d pressed.", i);
+        global_evdev->send_event(EV_KEY, i, 1);
 }
 
 void KeyAction::release()
 {
     //KeyRelease event for each in keys
     for(unsigned int i : keys)
-        log_printf(DEBUG, "%d released.", i);
+        global_evdev->send_event(EV_KEY, i, 0);
 }
 
 void GestureAction::press()
@@ -133,9 +135,6 @@ void GestureAction::move(HIDPP20::IReprogControlsV4::Move m)
 void GestureAction::release()
 {
     held = false;
-
-    std::string direction;
-
     auto d = get_direction(x, y);
 
     auto g = gestures.find(d);
@@ -145,9 +144,12 @@ void GestureAction::release()
         press_button(g->second->action);
         release_button(g->second->action);
     }
-
-    log_printf(DEBUG, "Gesture button released, moved %d (%d, %d).", d, x, y);
 }
+
+/*void SmartshiftAction::press()
+{
+
+}*/
 
 Direction get_direction(int x, int y)
 {

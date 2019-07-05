@@ -36,6 +36,12 @@ enum class Action
     ChangeDPI
 };
 
+struct device
+{
+    const char* path;
+    HIDPP::DeviceIndex index;
+};
+
 class ButtonAction
 {
 public:
@@ -92,8 +98,8 @@ class SmartshiftAction : public ButtonAction
 {
 public:
     SmartshiftAction() : ButtonAction(Action::ToggleSmartshift) {}
-    virtual void press();
-    virtual void release();
+    //virtual void press();
+    //virtual void release();
 };
 
 class SmoothscrollAction : public ButtonAction
@@ -108,8 +114,8 @@ class CycleDPIAction : public ButtonAction
 {
 public:
     CycleDPIAction(std::vector<int> d) : ButtonAction(Action::CycleDPI), dpis (d) {}
-    //virtual void press();
-    //virtual void release();
+    virtual void press();
+    virtual void release();
 private:
     std::vector<int> dpis;
 };
@@ -118,8 +124,8 @@ class ChangeDPIAction : public ButtonAction
 {
 public:
     ChangeDPIAction(int i) : ButtonAction(Action::ChangeDPI), dpi_inc (i) {}
-    //virtual void press();
-    //virtual void release();
+    virtual void press();
+    virtual void release();
 private:
     int dpi_inc;
 };
