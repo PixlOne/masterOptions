@@ -12,11 +12,11 @@ What works so far:
 * Listens for diverted button events (prints press/release events)
 * Gesture detection
 * Device connection/sleep event handlers
-* Evdev key events
+* Proper button remapping
 
 What's planned:
 
-* Proper button remapping (in progress)
+* Mapping gestures to relative events
 * Configuration files (in progress)
 * SmartShift settings
 * udev rules, running as a service

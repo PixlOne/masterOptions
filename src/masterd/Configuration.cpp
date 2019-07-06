@@ -12,12 +12,6 @@
 
 using namespace libconfig;
 
-/*const Configuration* config = new Configuration(
-{
-    {0xc3, new GestureAction({})},
-    {0xc4, new KeyAction({KEY_A})}
-});*/
-
 Configuration::Configuration(const char *config_file)
 {
     try
@@ -235,14 +229,37 @@ ButtonAction* parse_action(Action type, const Setting* action_config, bool is_ge
         return new GestureAction(gestures);
     }
     else if(type == Action::ToggleSmartshift) return new SmartshiftAction();
-    else if(type == Action::ToggleSmoothScroll) return new SmoothscrollAction();
+    else if(type == Action::ToggleHiresScroll) return new HiresScrollAction();
     else if(type == Action::CycleDPI)
     {
+        std::vector<int> dpis;
+        try
+        {
+            const Setting &keys_config = (*action_config)["dpis"];
+            for (int i = 0; i < keys_config.getLength(); i++)
+                dpis.push_back(keys_config[i]);
+        }
+        catch(SettingNotFoundException &e)
+        {
+            log_printf(ERROR, "Line %d: CycleDPI action is missing 'dpis' field, defaulting to NoAction.", action_config->getSourceLine());
+        }
 
+        return new CycleDPIAction(dpis);
     }
     else if(type == Action::ChangeDPI)
     {
+        int inc;
+        try
+        {
+            action_config->lookupValue("inc", inc);
+        }
+        catch(SettingNotFoundException &e)
+        {
+            log_printf(ERROR, "Line %d: ChangeDPI action is missing an 'inc' field, defaulting to NoAction.",action_config->getSourceLine());
+            return new NoAction();
+        }
 
+        return new ChangeDPIAction(inc);
     }
 
     log_printf(ERROR, "This shouldn't have happened. Unhandled action type? Defaulting to NoAction");
@@ -290,7 +307,7 @@ Action string_to_action(std::string s)
     if(s == "keypress") return Action::Keypress;
     if(s == "gestures") return Action::Gestures;
     if(s == "togglesmartshift") return Action::ToggleSmartshift;
-    if(s == "togglesmoothscroll") return Action::ToggleSmoothScroll;
+    if(s == "togglehiresscroll") return Action::ToggleHiresScroll;
     if(s == "cycledpi") return Action::CycleDPI;
     if(s == "changedpi") return Action::ChangeDPI;
 

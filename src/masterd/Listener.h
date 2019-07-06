@@ -3,6 +3,7 @@
 
 #include <hidpp20/FeatureInterface.h>
 #include <hidpp20/IReprogControlsV4.h>
+#include "EventHandler.h"
 
 class EventHandler
 {
@@ -13,12 +14,10 @@ public:
 
 class ButtonHandler : public EventHandler
 {
-    HIDPP20::IReprogControlsV4 _irc4;
-    std::vector<uint16_t> states;
-    std::vector<uint16_t> new_states;
 public:
-    ButtonHandler (HIDPP20::Device *dev):
+    ButtonHandler (HIDPP20::Device *dev, const device* d):
             _irc4 (dev),
+            _dev (d),
             states (0) {}
     const HIDPP20::FeatureInterface *feature () const
     {
@@ -26,6 +25,10 @@ public:
     }
     void handleEvent (const HIDPP::Report &event);
 protected:
+    HIDPP20::IReprogControlsV4 _irc4;
+    std::vector<uint16_t> states;
+    std::vector<uint16_t> new_states;
+    const device* _dev;
     std::future<void> current_future;
 };
 
@@ -74,16 +77,14 @@ protected:
 class ListenerThread
 {
 public:
-    ListenerThread (const char* p, HIDPP::DeviceIndex i):
-            path (p), index (i)
-    {
-    }
+    ListenerThread (const device* d): dev (d) {};
     void stop();
     void listen();
 protected:
-    const char* path;
-    HIDPP::DeviceIndex index;
+    const device* dev;
     EventListener* listener;
 };
+
+std::map<uint16_t, uint8_t> get_features(const char* path, HIDPP::DeviceIndex index);
 
 #endif //MASTEROPTIONS_LISTENER_H

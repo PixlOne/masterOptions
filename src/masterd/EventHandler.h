@@ -31,23 +31,26 @@ enum class Action
     Keypress,
     Gestures,
     ToggleSmartshift,
-    ToggleSmoothScroll,
+    ToggleHiresScroll,
     CycleDPI,
     ChangeDPI
 };
 
+std::map<uint16_t, uint8_t> get_features(const char* path, HIDPP::DeviceIndex index);
+
 struct device
 {
     const char* path;
-    HIDPP::DeviceIndex index;
+    const HIDPP::DeviceIndex index;
+    const std::map<uint16_t, uint8_t> features = get_features(path, index);
 };
 
 class ButtonAction
 {
 public:
     Action type;
-    void press() {};
-    void release() {};
+    void press(const device* d) {};
+    void release(const device* d) {};
 protected:
     ButtonAction(Action a) : type (a) {};
 };
@@ -74,8 +77,8 @@ class KeyAction : public ButtonAction
 {
 public:
     KeyAction(std::vector<unsigned int> k) : ButtonAction(Action::Keypress), keys (std::move(k)) {}
-    virtual void press();
-    virtual void release();
+    virtual void press(const device* d);
+    virtual void release(const device* d);
 private:
     std::vector<unsigned int> keys;
 };
@@ -85,9 +88,9 @@ class GestureAction : public ButtonAction
 public:
     GestureAction(std::map<Direction, Gesture*> g) : ButtonAction(Action::Gestures), gestures (std::move(g)) {}
     std::map<Direction, Gesture*> gestures;
-    virtual void press();
-    void move(HIDPP20::IReprogControlsV4::Move m);
-    virtual void release();
+    virtual void press(const device* d);
+    void move(HIDPP20::IReprogControlsV4::Move m, const device* d);
+    virtual void release(const device* d);
 private:
     bool held;
     int x;
@@ -98,43 +101,39 @@ class SmartshiftAction : public ButtonAction
 {
 public:
     SmartshiftAction() : ButtonAction(Action::ToggleSmartshift) {}
-    //virtual void press();
-    //virtual void release();
+    virtual void press(const device* d);
 };
 
-class SmoothscrollAction : public ButtonAction
+class HiresScrollAction : public ButtonAction
 {
 public:
-    SmoothscrollAction() : ButtonAction(Action::ToggleSmoothScroll) {}
-    //virtual void press();
-    //virtual void release();
+    HiresScrollAction() : ButtonAction(Action::ToggleHiresScroll) {}
+    virtual void press(const device* d);
 };
 
 class CycleDPIAction : public ButtonAction
 {
 public:
     CycleDPIAction(std::vector<int> d) : ButtonAction(Action::CycleDPI), dpis (d) {}
-    virtual void press();
-    virtual void release();
+    virtual void press(const device* d);
 private:
-    std::vector<int> dpis;
+    const std::vector<int> dpis;
 };
 
 class ChangeDPIAction : public ButtonAction
 {
 public:
     ChangeDPIAction(int i) : ButtonAction(Action::ChangeDPI), dpi_inc (i) {}
-    virtual void press();
-    virtual void release();
+    virtual void press(const device* d);
 private:
     int dpi_inc;
 };
 
-void press_button(uint16_t cid);
-void press_button(ButtonAction* action);
-void release_button(uint16_t cid);
-void release_button(ButtonAction* action);
-void move_diverted(uint16_t cid, HIDPP20::IReprogControlsV4::Move move);
+void press_button(uint16_t cid, const device* d);
+void press_button(ButtonAction* action, const device* d);
+void release_button(uint16_t cid, const device* d);
+void release_button(ButtonAction* action, const device* d);
+void move_diverted(uint16_t cid, HIDPP20::IReprogControlsV4::Move move, const device* d);
 
 Direction get_direction(int x, int y);
 

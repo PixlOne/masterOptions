@@ -15,7 +15,7 @@ void DeviceHandler::start()
 
     divert_buttons(path.c_str(), index);
 
-    auto listener = new ListenerThread(path.c_str(), index);
+    auto listener = new ListenerThread(new device {path.c_str(), index});
     auto listener_future = std::async(std::launch::async, &ListenerThread::listen, listener);
 
     HIDPP::SimpleDispatcher dispatcher(path.c_str());
