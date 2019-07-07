@@ -14,15 +14,6 @@ EvdevDevice::EvdevDevice(const char* name)
     libevdev_enable_event_type(device, EV_REL);
     for(int i = 0; i < REL_CNT; i++)
         libevdev_enable_event_code(device, EV_REL, i, nullptr);
-    libevdev_enable_event_type(device, EV_SW);
-    for(int i = 0; i < SW_CNT; i++)
-        libevdev_enable_event_code(device, EV_SW, i, nullptr);
-    libevdev_enable_event_type(device, EV_MSC);
-    for(int i = 0; i < MSC_CNT; i++)
-        libevdev_enable_event_code(device, EV_MSC, i, nullptr);
-    libevdev_enable_event_type(device, EV_LED);
-    for(int i = 0; i < LED_CNT; i++)
-        libevdev_enable_event_code(device, EV_LED, i, nullptr);
 
     int err = libevdev_uinput_create_from_device(device, LIBEVDEV_UINPUT_OPEN_MANAGED, &ui_device);
 

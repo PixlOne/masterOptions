@@ -13,7 +13,12 @@
 
 using namespace HIDPP20;
 
-void divert_buttons(const char* path, HIDPP::DeviceIndex index)
+void apply_config(const device* d)
+{
+
+}
+
+void divert_buttons(const device* d)
 {
     std::unique_ptr<HIDPP::Dispatcher> dispatcher;
     const int max_tries = 5;
@@ -22,7 +27,7 @@ void divert_buttons(const char* path, HIDPP::DeviceIndex index)
     {
         try
         {
-            dispatcher = std::make_unique<HIDPP::SimpleDispatcher>(path);
+            dispatcher = std::make_unique<HIDPP::SimpleDispatcher>(d->path);
             break;
         }
         catch (std::exception &e)
@@ -32,7 +37,7 @@ void divert_buttons(const char* path, HIDPP::DeviceIndex index)
             else usleep(try_delay);
         }
     }
-    Device dev(dispatcher.get(), index);
+    Device dev(dispatcher.get(), d->index);
     for(int i = 0; i < max_tries; i++)
     {
         try
@@ -51,13 +56,29 @@ void divert_buttons(const char* path, HIDPP::DeviceIndex index)
                 it->first;
                 irc4.setControlReporting(it->first, flags, it->first);
             }
-            break;
+            return;
         }
         catch (Error &e)
         {
-            if(i >= max_tries - 1)
+            log_printf(ERROR, "Could not divert buttons. Error code %d: %s", e.errorCode(), e.what());
+            if(i >= (max_tries - 1))
                 log_printf(ERROR, "Could not divert buttons. Error code %d: %s", e.errorCode(), e.what());
             else usleep(try_delay);
         }
     }
+}
+
+void set_smartshift(bool b, const device* d)
+{
+
+}
+
+void set_hiresscroll(bool b, const device* d)
+{
+
+}
+
+void set_dpi(int dpi, const device* d)
+{
+
 }

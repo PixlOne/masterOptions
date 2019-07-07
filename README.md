@@ -3,30 +3,32 @@
 This is intended to be a daemon and configuration utility for the Logitech MX Master on Linux.
 
 
-**NOTE:** This is currently in an early stage of development. You may want to use [libratbag](https://github.com/libratbag/libratbag) instead.
+**NOTE:** This is currently a work in progress. You may want to use [libratbag](https://github.com/libratbag/libratbag) instead.
 
 What works so far:
 
-* Automatic device detection
-* Automatic button divertion (pre-defined in Diverter.h)
-* Listens for diverted button events (prints press/release events)
+* Automatic device detection & divertion
 * Gesture detection
-* Device connection/sleep event handlers
-* Proper button remapping
+* Redivertion on disconnect
+* Button remapping
+* Configuration files
 
 What's planned:
 
-* Mapping gestures to relative events
-* Configuration files (in progress)
-* SmartShift settings
+* Mapping gestures to relative axes
+* Configuration documentation
+* Smartshift, DPI, hires scrolling config
 * udev rules, running as a service
+* Properly documenting code
+
+Possible ideas:
+
+* Universal Logitech HID++ config daemon
 * CLI configuration utility (GUI too maybe?)
-* Supporting more devices (low priority)
-* ...
 
 ## Building
 
-This project requires a C++14 compiler, cmake, libevdev, and [libhidpp](https://github.com/cvuchener/hidpp)
+This project requires a C++14 compiler, cmake, libevdev, libconfig, and [libhidpp](https://github.com/cvuchener/hidpp)
 
 To build this project, run:
 
@@ -37,4 +39,4 @@ cmake ..
 make
 ```
 
-Installation is currently not possible.
+Installation is currently not implemented.

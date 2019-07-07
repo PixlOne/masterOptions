@@ -13,9 +13,11 @@ void DeviceHandler::start()
 {
     while(SCANNING_DEVICE) {}
 
-    divert_buttons(path.c_str(), index);
+    const device* dev = new device {path.c_str(), index};
 
-    auto listener = new ListenerThread(new device {path.c_str(), index});
+    divert_buttons(dev);
+
+    auto listener = new ListenerThread(dev);
     auto listener_future = std::async(std::launch::async, &ListenerThread::listen, listener);
 
     HIDPP::SimpleDispatcher dispatcher(path.c_str());
@@ -29,7 +31,7 @@ void DeviceHandler::start()
             uint8_t flags;
             irc4.getControlReporting(config->buttonActions.begin()->first, flags);
             if (!(flags & HIDPP20::IReprogControlsV4::TemporaryDiverted))
-                divert_buttons(path.c_str(), index);
+                divert_buttons(dev);
             usleep(20000);
         }
     }
