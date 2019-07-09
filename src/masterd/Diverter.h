@@ -1,13 +1,15 @@
 #ifndef MASTEROPTIONS_DIVERTER_H
 #define MASTEROPTIONS_DIVERTER_H
 
-void apply_config(const device* d);
+#include "Configuration.h"
 
-void divert_buttons(const device* d);
+void apply_config(const device* d, bool scanning=false);
 
-void set_smartshift(bool b, const device* d);
+void divert_buttons(const device* d, bool scanning=false);
 
-void set_hiresscroll(bool b, const device* d);
-void set_dpi(int dpi, const device* d);
+void set_smartshift(smartshift_options ops, const device* d, bool scanning=false);
+
+void set_hiresscroll(bool b, const device* d, bool scanning=false);
+void set_dpi(int dpi, const device* d, bool scanning=false);
 
 #endif //MASTEROPTIONS_DIVERTER_H

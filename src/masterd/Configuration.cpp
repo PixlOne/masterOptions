@@ -32,6 +32,92 @@ Configuration::Configuration(const char *config_file)
 
     const Setting &root = cfg.getRoot();
 
+    try
+    {
+        int d;
+        if(!root.lookupValue("dpi", d))
+            throw SettingTypeException(root["dpi"]);
+        dpi = new int(d);
+        log_printf(DEBUG, "DPI: %d", d);
+    }
+    catch(const SettingNotFoundException &e)
+    {
+        log_printf(INFO, "Missing dpi option, not setting.");
+    }
+    catch(const SettingTypeException &e)
+    {
+        log_printf(WARN, "Line %d: DPI must me an integer; not setting.", root["dpi"].getSourceLine());
+    }
+
+    try
+    {
+        bool b;
+        if(!root.lookupValue("hiresscroll", b))
+            throw SettingTypeException(root["hiresscroll"]);
+        hiresscroll = new bool(b);
+    }
+    catch(const SettingNotFoundException &e)
+    {
+        log_printf(INFO, "Missing hiresscroll option, not setting.");
+    }
+    catch(const SettingTypeException &e)
+    {
+        log_printf(WARN, "Line %d: DPI must me an integer; not setting.", root["hiresscroll"].getSourceLine());
+    }
+
+    try
+    {
+        const Setting& ss = root["smartshift"];
+        smartshift = new smartshift_options;
+        bool on;
+        int threshold;
+        try
+        {
+            if (ss.lookupValue("on", on))
+            {
+                smartshift->on = new bool(on);
+                log_printf(DEBUG, "Smartshift: %s", on ? "on" : "off");
+            }
+            else log_printf(WARN, "Line %d: on field must be a boolean", ss["on"].getSourceLine());
+        }
+        catch(const SettingNotFoundException &e)
+        {
+            log_printf(INFO, "Missing on option for smartshift, not setting.");
+        }
+
+        try
+        {
+            if (ss.lookupValue("threshold", threshold))
+            {
+                if(threshold < 0)
+                {
+                    threshold = 1;
+                    log_printf(INFO, "Smartshift threshold must be > 0 or < 100, setting to 0.");
+                }
+                if(threshold > 100)
+                {
+                    threshold = 99;
+                    log_printf(INFO, "Smartshift threshold must be > 0 or < 100, setting to 99.");
+                }
+                smartshift->threshold = new uint8_t(threshold);
+                log_printf(DEBUG, "Smartshift threshold: %d", threshold);
+            }
+            else log_printf(WARN, "Line %d: threshold must be an integer", ss["threshold"].getSourceLine());
+        }
+        catch(const SettingNotFoundException &e)
+        {
+            log_printf(INFO, "Missing threshold for smartshift, not setting.");
+        }
+    }
+    catch(const SettingNotFoundException &e)
+    {
+        log_printf(INFO, "Missing smartshift options, not setting.");
+    }
+    catch(const SettingTypeException &e)
+    {
+        log_printf(WARN, "Line %d: smartshift field must be an object", root["hiressscroll"].getSourceLine());
+    }
+
     Setting* buttons;
     try
     {

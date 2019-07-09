@@ -4,11 +4,19 @@
 #include <libconfig.h++>
 #include "EventHandler.h"
 
+struct smartshift_options
+{
+    bool* on = nullptr;
+    uint8_t* threshold = nullptr;
+};
+
 class Configuration
 {
 public:
     Configuration(const char* config_file);
-    Configuration(std::map<uint16_t, ButtonAction*> c) : buttonActions (std::move(c)) {}
+    const int* dpi = nullptr;
+    smartshift_options* smartshift = nullptr;
+    const bool* hiresscroll = nullptr;
     std::map<uint16_t, ButtonAction*> buttonActions;
 private:
     libconfig::Config cfg;

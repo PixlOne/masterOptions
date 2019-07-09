@@ -155,7 +155,7 @@ void SmartshiftAction::press(const device* d)
 
     if(d->features.find(0x2110) == d->features.end())
     {
-        log_printf(DEBUG, "Error with Smart shift action, feature is non-existent.");
+        log_printf(DEBUG, "Error toggling smart shift, feature is non-existent.");
         return;
     }
     const uint8_t f_index = d->features.find(0x2110)->second;
@@ -173,7 +173,7 @@ void SmartshiftAction::press(const device* d)
     }
     catch(HIDPP20::Error &e)
     {
-        log_printf(ERROR, "Smart shift error, code %d: %s\n", e.errorCode(), e.what());
+        log_printf(ERROR, "Error toggling smart shift, code %d: %s\n", e.errorCode(), e.what());
         return;
     }
 }
@@ -185,7 +185,7 @@ void HiresScrollAction::press(const device* d)
 
     if(d->features.find(0x2110) == d->features.end())
     {
-        log_printf(DEBUG, "Error with Smooth scroll action, feature is non-existent.");
+        log_printf(DEBUG, "Error toggling hires scroll, feature is non-existent.");
         return;
     }
     const uint8_t f_index = d->features.find(0x2121)->second;
@@ -203,7 +203,7 @@ void HiresScrollAction::press(const device* d)
     }
     catch(HIDPP20::Error &e)
     {
-        log_printf(ERROR, "Smart shift error, code %d: %s\n", e.errorCode(), e.what());
+        log_printf(ERROR, "Error toggling hires scroll, code %d: %s\n", e.errorCode(), e.what());
         return;
     }
 }
