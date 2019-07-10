@@ -22,10 +22,19 @@ LogLevel global_verbosity = DEBUG;
 
 Configuration* config;
 
-EvdevDevice* global_evdev = new EvdevDevice(evdev_name);
+EvdevDevice* global_evdev;
 
 int main(int argc, char** argv)
 {
+    try
+    {
+        global_evdev = new EvdevDevice(evdev_name);
+    }
+    catch(std::system_error& e)
+    {
+        log_printf(ERROR, "Could not create evdev device: %s", e.what());
+        return EXIT_FAILURE;
+    }
     try
     {
         config = new Configuration("masterd.cfg");

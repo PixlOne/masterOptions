@@ -197,7 +197,7 @@ ButtonAction* parse_action(Action type, const Setting* action_config, bool is_ge
             const Setting &keys_config = (*action_config)["keys"];
             for (int i = 0; i < keys_config.getLength(); i++)
             {
-                unsigned int keycode = libevdev_event_code_from_code_name(keys_config[i]);
+                unsigned int keycode = libevdev_event_code_from_name(EV_KEY, keys_config[i]);
                 if(keycode == -1)
                 {
                     const char* keyname = keys_config[i];

@@ -3,7 +3,10 @@ project(masterd)
 
 set(CMAKE_CXX_STANDARD 14)
 
+set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/../CMake")
+
 find_package(Threads REQUIRED)
+find_package(PkgConfig REQUIRED)
 
 add_executable(masterd
     masterd.cpp
@@ -26,12 +29,18 @@ add_executable(masterd
 
 set_target_properties(masterd PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 
-include_directories("/usr/local/include/hidpp/" "/usr/include/libevdev-1.0/")
+pkg_check_modules(PC_EVDEV libevdev)
+pkg_check_modules(libhidpp REQUIRED)
+pkg_check_modules(libconfig++ REQUIRED)
 
-if(EXISTS "/usr/local/lib/libhidpp.so")
-    target_link_libraries(masterd /usr/local/lib/libhidpp.so)
-else()
-    target_link_libraries(masterd /usr/lib/libhidpp.so)
-endif()
+find_path(HIDPP_INCLUDE_DIR hidpp)
+find_library(HIDPP_LIBRARY libhidpp.so)
 
-target_link_libraries(masterd ${CMAKE_THREAD_LIBS_INIT} /usr/lib/libevdev.so /usr/lib/libconfig++.so)
+find_path(EVDEV_INCLUDE_DIR libevdev/libevdev.h
+          HINTS ${PC_EVDEV_INCLUDE_DIRS} ${PC_EVDEV_INCLUDEDIR})
+find_library(EVDEV_LIBRARY
+        NAMES evdev libevdev)
+
+include_directories(${HIDPP_INCLUDE_DIR}/hidpp ${EVDEV_INCLUDE_DIR})
+
+target_link_libraries(masterd ${CMAKE_THREAD_LIBS_INIT} ${EVDEV_LIBRARY} config++ ${HIDPP_LIBRARY})

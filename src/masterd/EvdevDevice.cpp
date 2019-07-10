@@ -1,5 +1,6 @@
 #include <libevdev/libevdev.h>
 #include <libevdev/libevdev-uinput.h>
+#include <system_error>
 
 #include "EvdevDevice.h"
 
@@ -18,7 +19,7 @@ EvdevDevice::EvdevDevice(const char* name)
     int err = libevdev_uinput_create_from_device(device, LIBEVDEV_UINPUT_OPEN_MANAGED, &ui_device);
 
     if(err != 0)
-        throw err;
+        throw std::system_error(-err, std::generic_category());
 }
 
 void EvdevDevice::send_event(unsigned int type, unsigned int code, int value)
