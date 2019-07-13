@@ -104,7 +104,7 @@ void DeviceFinder::removeDevice(const char* path)
     {
         if(!strcmp((*it)->handler->path.c_str(), path))
         {
-            log_printf(INFO, "%s on %s disconnected.", (*it)->handler->getName(), path);
+            log_printf(INFO, "%s on %s disconnected.", (*it)->handler->getName().c_str(), path);
             (*it)->handler->DeviceRemoved = true;
             (*it)->future.wait();
             handlers.erase(it);
