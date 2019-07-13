@@ -50,14 +50,14 @@ void DeviceFinder::addDevice(const char *path)
                     auto version = d.protocolVersion();
                     if (index == HIDPP::DefaultDevice && version == std::make_tuple(1, 0))
                         has_receiver_index = true;
-                    if (!strcmp(d.name().c_str(), DEVICE_NAME))
+                    if (d.name() == MX_MASTER_NAME || d.name() == MX_MASTER_2S_NAME)
                     {
-                        DeviceHandler *dh = new DeviceHandler(std::string(path), index);
+                        DeviceHandler *dh = new DeviceHandler(d.name(), std::string(path), index);
                         handlers.push_back(new handler_pair{
                                 dh, std::async(std::launch::async, &DeviceHandler::start, dh)
                         });
 
-                        log_printf(INFO, "%s detected: device %d on %s", DEVICE_NAME, index, path);
+                        log_printf(INFO, "%s detected: device %d on %s", d.name().c_str(), index, path);
                     }
                     i = max_tries;
                 }
@@ -104,7 +104,7 @@ void DeviceFinder::removeDevice(const char* path)
     {
         if(!strcmp((*it)->handler->path.c_str(), path))
         {
-            log_printf(INFO, "%s on %s disconnected.", DEVICE_NAME, path);
+            log_printf(INFO, "%s on %s disconnected.", (*it)->handler->getName(), path);
             (*it)->handler->DeviceRemoved = true;
             (*it)->future.wait();
             handlers.erase(it);

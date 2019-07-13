@@ -13,8 +13,21 @@
 #include "Logger.h"
 
 using namespace std::chrono_literals;
+using namespace std;
 
 bool SCANNING_DEVICE = false;
+
+DeviceHandler::DeviceHandler(const string& name, const string& path, HIDPP::DeviceIndex index) :
+	DeviceRemoved(false),
+	path(path),
+	index(index),
+	name(name)
+{
+}
+
+const string& DeviceHandler::getName() const {
+	return this->name;
+}
 
 void DeviceHandler::start()
 {

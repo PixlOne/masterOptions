@@ -1,7 +1,8 @@
 #ifndef MASTEROPTIONS_DEVICEFINDER_H
 #define MASTEROPTIONS_DEVICEFINDER_H
 
-#define DEVICE_NAME "MX Master"
+#define MX_MASTER_NAME "MX Master"
+#define MX_MASTER_2S_NAME "MX Master 2S"
 
 struct handler_pair;
 

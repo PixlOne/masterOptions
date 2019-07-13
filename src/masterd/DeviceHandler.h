@@ -4,14 +4,16 @@
 class DeviceHandler
 {
 public:
-    DeviceHandler(const std::string p, HIDPP::DeviceIndex i):
-            path (p), index (i)
-    {
-    }
+    DeviceHandler(const std::string& name, const std::string& path, HIDPP::DeviceIndex index);
     void start();
-    bool DeviceRemoved = false;
+    const std::string& getName() const;
+
+    bool DeviceRemoved;
     std::string path;
     const HIDPP::DeviceIndex index;
+
+private:
+	std::string name;
 };
 
 extern bool SCANNING_DEVICE;
