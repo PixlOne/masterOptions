@@ -20,12 +20,12 @@ void DeviceHandler::start()
 {
     while(SCANNING_DEVICE) {}
 
-    const device* dev = new device {path.c_str(), index};
+    const device dev({path.c_str(), index});
 
-    apply_config(dev);
+    apply_config(&dev);
 
-    auto listener = new ListenerThread(dev);
-    auto listener_future = std::async(std::launch::async, &ListenerThread::listen, listener);
+    ListenerThread listener(&dev);
+    auto listener_future = std::async(std::launch::async, &ListenerThread::listen, &listener);
 
     HIDPP::SimpleDispatcher dispatcher(path.c_str());
     HIDPP20::Device d(&dispatcher, index);
@@ -57,7 +57,7 @@ void DeviceHandler::start()
             {
                 try
                 {
-                    apply_config(dev);
+                    apply_config(&dev);
                     break;
                 }
                 catch(std::exception e) {}
@@ -67,6 +67,6 @@ void DeviceHandler::start()
         usleep(200000);
     }
 
-    listener->stop();
+    listener.stop();
     listener_future.wait();
 }
