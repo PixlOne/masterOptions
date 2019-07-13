@@ -1,4 +1,3 @@
-#include <hid/DeviceMonitor.h>
 #include <hidpp/SimpleDispatcher.h>
 #include <hidpp/Device.h>
 #include <hidpp10/Error.h>
@@ -8,19 +7,12 @@
 #include <future>
 
 #include "DeviceFinder.h"
-#include "DeviceHandler.h"
 #include "Logger.h"
-
-struct handler_pair
-{
-    DeviceHandler* handler;
-    std::future<void> future;
-};
 
 void find_device()
 {
-    auto df = new DeviceFinder();
-    df->run();
+    DeviceFinder df;
+    df.run();
 }
 
 void DeviceFinder::addDevice(const char *path)
@@ -49,15 +41,23 @@ void DeviceFinder::addDevice(const char *path)
                     HIDPP::Device d(&dispatcher, index);
                     auto version = d.protocolVersion();
                     if (index == HIDPP::DefaultDevice && version == std::make_tuple(1, 0))
+                    {
                         has_receiver_index = true;
-                    if (!strcmp(d.name().c_str(), DEVICE_NAME))
+                        log_printf(INFO, "%s detected: device %d on %s", d.name().c_str(), index, path);
+                    }
+                    else if (!strcmp(d.name().c_str(), DEVICE_NAME))
                     {
                         DeviceHandler *dh = new DeviceHandler(std::string(path), index);
-                        handlers.push_back(new handler_pair{
-                                dh, std::async(std::launch::async, &DeviceHandler::start, dh)
+                        handlers.push_back({
+                                dh,
+                                std::async(std::launch::async, &DeviceHandler::start, dh)
                         });
 
                         log_printf(INFO, "%s detected: device %d on %s", DEVICE_NAME, index, path);
+                    }
+                    else
+                    {
+                    	log_printf(WARN, "%s detected, but not supported: device %d on %s", d.name().c_str(), index, path);
                     }
                     i = max_tries;
                 }
@@ -102,14 +102,22 @@ void DeviceFinder::removeDevice(const char* path)
     auto it = handlers.begin();
     while (it != handlers.end())
     {
-        if(!strcmp((*it)->handler->path.c_str(), path))
+        if(!strcmp(it->handler->path.c_str(), path))
         {
             log_printf(INFO, "%s on %s disconnected.", DEVICE_NAME, path);
-            (*it)->handler->DeviceRemoved = true;
-            (*it)->future.wait();
+            it->handler->DeviceRemoved = true;
+            it->future.wait();
+            delete it->handler;
             handlers.erase(it);
         }
         else
             it++;
     }
+}
+
+DeviceFinder::~DeviceFinder(void)
+{
+	for (auto it = handlers.begin(); it != handlers.end(); it++) {
+		delete it->handler;
+	}
 }
