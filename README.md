@@ -1,3 +1,5 @@
+## Note: This project is no longer being developed here, please visit https://github.com/PixlOne/logiops for further developments.
+
 # Logitech MX Master Options
 
 This is intended to be a daemon and configuration utility for the Logitech MX Master on Linux.
